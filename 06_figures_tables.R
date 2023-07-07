@@ -1,17 +1,8 @@
 
-# figures and summary stats
-
-#libraries
-library(scico)
-library(cowplot)
-
-#import
-
-#import annual storage and turnover
-source('annual_turnover_storage_import.r')
-
-#import minimum turnover
-source('minimum_turnover_import.r')
+#figures and summary stats. It is recommended you run each section on its own
+#instead of running entire script. However, some sections use data produced
+#by other sections. Thus, it is recommended to run each section in sequence from
+#top-to-bottom.
 
 #merge together by pixel so working from same set of pixels for analysis
 #we do this for consistency but also because the annual turnover is filtered
@@ -19,12 +10,18 @@ source('minimum_turnover_import.r')
 minimum_turnover_lc <- merge(minimum_turnover_lc,annual_turnover_lc[c(2,3,7)],
                              by = c('lat','lon'))
 
+#unique vegetation types
+group_2_names <- unique(annual_turnover_lc$group_2)
+
+#order by median transit
+veg_order <- c("Savanna", "Cropland", "Deciduous broadleaf forest",
+                 'Evergreen broadleaf forest','Grassland',
+                 'Mixed forest','Evergreen needleleaf forest',
+                 'Shrubland','Deciduous needleleaf forest')
+
 #-------------------------------------------------------------------------------
 
 # annual and minimum transit time by land cover types-------
-
-#unique vegetation types
-group_2_names <- unique(annual_turnover_lc$group_2)
 
 #list to store each vegetation type
 annual_turnover_list_2 <- list()
@@ -226,7 +223,8 @@ dev.off()
 #cleanup
 rm(annual_turnover_by_latitude,minimum_turnover_by_latitude,
    annual_turnover_by_lat_plot, annual_turnover_by_lat_facet,
-   minimum_turnover_by_lat_plot, minimum_turnover_by_lat_facet)
+   minimum_turnover_by_lat_plot, minimum_turnover_by_lat_facet,
+   group_2_lc,j,quantile_95)
 
 #-------------------------------------------------------------------------------
 
@@ -235,24 +233,18 @@ rm(annual_turnover_by_latitude,minimum_turnover_by_latitude,
 
 # turnover boxplots -------
 
-#reorder by median transit
-level_order <- c("Savanna", "Cropland", "Deciduous broadleaf forest",
-                 'Evergreen broadleaf forest','Grassland',
-                 'Mixed forest','Evergreen needleleaf forest',
-                 'Shrubland','Deciduous needleleaf forest')
-
 #annual transit by landcover type
 
 #plot
 annual_turnover_boxplot <- 
-  ggplot(annual_turnover_lc_95,aes(x=factor(group_2,level=level_order),
+  ggplot(annual_turnover_lc_95,aes(x=factor(group_2,level=veg_order),
                                    y=annual_turnover,
                                    color=annual_turnover)) +
   geom_hline(yintercept = 5.4) + #global median
   scale_color_scico('Annual transit time (days)',palette = 'batlow',direction=-1) +
   geom_jitter(size=.25,width = 0.25,height=0.2,alpha=0.1) +
-  geom_violin(width=1) +
-  geom_boxplot(width=.1) +
+  geom_violin(width=1,color='black') +
+  geom_boxplot(width=.1,color='black') +
   ylab('Annual transit time (days)') +
   xlab('') +
   theme(
@@ -278,14 +270,14 @@ annual_turnover_boxplot <-
 
 #plot
 minimum_turnover_boxplot <- 
-  ggplot(minimum_turnover_lc_95,aes(x=factor(group_2,level=level_order),
+  ggplot(minimum_turnover_lc_95,aes(x=factor(group_2,level=veg_order),
                                     y=minimum_turnover,
                                     color=minimum_turnover)) +
   geom_hline(yintercept = 2.4) + #global median
   scale_color_scico('Minimum transit time (days)',palette = 'batlow',direction=-1) +
   geom_jitter(size=.25,width = 0.25,height=0.2,alpha=0.1) +
-  geom_violin(width=1) +
-  geom_boxplot(width=.1) +
+  geom_violin(width=1,color='black') +
+  geom_boxplot(width=.1,color='black') +
   ylab('Minimum transit time (days)') +
   xlab('') +
   theme(
@@ -325,8 +317,6 @@ rm(annual_turnover_lc_95,minimum_turnover_lc_95,annual_turnover_boxplot,
 
 # storage by land cover types-------
 
-# truncate the condensed land cover types (group 2)
-group_2_names <- unique(annual_turnover_lc$group_2)
 storage_list_2 <- list()
 for(j in group_2_names){
   
@@ -342,6 +332,8 @@ for(j in group_2_names){
   #store in list
   storage_list_2[[j]] <- lc_filtered_2
   
+  rm(lc_filtered_2,group_2_lc,j)
+  
 }
 
 #store in list
@@ -350,12 +342,6 @@ rm(storage_list_2)
 
 #calculate median storage by latitude
 storage_by_latitude <- aggregate(annual_storage ~ lat + group,median,data = annual_storage_lc_95)
-
-#reorder by median transit
-level_order <- c("Savanna", "Cropland", "Deciduous broadleaf forest",
-                 'Evergreen broadleaf forest','Grassland',
-                 'Mixed forest','Evergreen needleleaf forest',
-                 'Shrubland','Deciduous needleleaf forest')
 
 #storage by latitude
 storage_by_lat <- ggplot(storage_by_latitude,aes(lat,annual_storage,col=group)) +
@@ -390,14 +376,14 @@ storage_by_lat <- ggplot(storage_by_latitude,aes(lat,annual_storage,col=group)) 
 #transit by land cover boxplot
 
 #plot
-boxplot_annual_storage <- ggplot(annual_storage_lc_95,aes(x=factor(group_2,level=level_order),
+boxplot_annual_storage <- ggplot(annual_storage_lc_95,aes(x=factor(group_2,level=veg_order),
                                                           y=annual_storage,
                                                           color=annual_storage)) +
   geom_hline(yintercept = 3.37) + #global median
   scale_color_scico('Water storage (mm)', palette = 'batlow',direction=-1) +
   geom_jitter(size=.25,width = 0.25,height=0.2,alpha=0.1) +
-  geom_violin(width=1) +
-  geom_boxplot(width=.1) +
+  geom_violin(width=1,color='black') +
+  geom_boxplot(width=.1,color='black') +
   ylab('Aboveground water storage (mm)') +
   xlab('') +
   theme(
@@ -429,15 +415,15 @@ print(plot_grid(boxplot_annual_storage,storage_by_lat,
 
 dev.off()
 
-rm(storage_by_lat,boxplot_annual_storage,storage_by_latitude)
+rm(storage_by_lat,boxplot_annual_storage,storage_by_latitude,
+   annual_storage_lc_95)
 
 #-------------------------------------------------------------------------------
-# summary stats of transit: annual, minimum, and seasonal ------
+# summary stats of transit: annual and minimum ------
 
 #annual turnover summary
-group_2_list <- unique(annual_turnover_lc$group_2)
 annual_turnover_summary_list <- list()
-for(j in group_2_list){
+for(j in group_2_names){
   
   #load in
   group_2_lc <- subset(annual_turnover_lc,group_2 == j)
@@ -467,23 +453,19 @@ for(j in group_2_list){
 
 #turn into dataframe
 annual_turnover_summary <- do.call('rbind',annual_turnover_summary_list)
-rm(annual_turnover_summary_list)
 rownames(annual_turnover_summary) <- NULL
 
 #write to
 write.csv(annual_turnover_summary, 'manuscript_figures/annual_turnover_summaries.csv')
 
 #cleanup
-rm(group_2_lc,quantile_5,quantile_50,quantile_95,quantile_df)
-
-#STOPPED HERE
-#
-#
+rm(group_2_lc,quantile_5,quantile_50,quantile_95,quantile_df,
+   annual_turnover_summary_list,annual_turnover_summary)
 
 
 #minimum turnover summary
 minimum_turnover_summary_list <- list()
-for(j in group_2_list){
+for(j in group_2_names){
   
   #load in
   group_2_lc <- subset(minimum_turnover_lc,group_2 == j)
@@ -491,7 +473,7 @@ for(j in group_2_list){
   #5th quantile
   quantile_5 = round(quantile(group_2_lc$minimum_turnover,probs = 0.05),2)
   
-  #05th quantile
+  #50th quantile
   quantile_50 = round(quantile(group_2_lc$minimum_turnover,probs = 0.5),2)
   
   #95th quantile
@@ -516,22 +498,22 @@ for(j in group_2_list){
 
 #turn to dataframe
 minimum_turnover_summary <- do.call('rbind',minimum_turnover_summary_list)
-rm(minimum_turnover_summary_list)
 rownames(minimum_turnover_summary) <- NULL
 
 #write to file
 write.csv(minimum_turnover_summary, 'manuscript_figures/minimum_turnover_summaries.csv')
-rm(minimum_turnover_summary,minimum_turnover_lc)
+rm(group_2_lc,quantile_5,quantile_50,quantile_95,
+   minimum_turnover_summary,minimum_turnover_summary_list,j)
 
 
-# transit estimates by each season
+#-------------------------------------------------------------------------------
+# transit estimates by each season -----
 
 #create a function that can input the name of the season and output the dataframe
 
 #winter
 winter_summary <- seasonal_turnover_lc('winter',winter = T)
 rownames(winter_summary) <- NULL
-#head(winter_summary,1)
 
 #spring
 spring_summary <- seasonal_turnover_lc('spring',winter = F)
@@ -552,15 +534,14 @@ seasonal_summary <- rbind(winter_summary,spring_summary,
 write.csv(seasonal_summary, 'manuscript_figures/seasonal_summary.csv')
 
 rm(winter_summary,spring_summary,
-   summer_summary,fall_summary,seasonal_summary,seasonal_turnover)
+   summer_summary,fall_summary,seasonal_summary)
 
 #-------------------------------------------------------------------------------
 # summary stats of aboveground water storage -------
 
 #run loop
-group_2_list <- unique(annual_turnover_lc$group_2)
 annual_storage_summary_list <- list()
-for(j in group_2_list){
+for(j in group_2_names){
   
   #load in
   group_2_lc <- subset(annual_turnover_lc,group_2 == j)
@@ -592,15 +573,14 @@ for(j in group_2_list){
 
 #turn to dataframe
 annual_storage_summary <- do.call('rbind',annual_storage_summary_list)
-rm(annual_storage_summary_list)
 rownames(annual_storage_summary) <- NULL
 
 #save to file
 write.csv(annual_storage_summary, 'manuscript_figures/annual_storage_summaries.csv')
 
 #cleanup
-rm(group_2_list,annual_storage_summary_list,group_2_lc,quantile_5,quantile_50,
-   quantile_95,annual_storage_summary)
+rm(group_2_lc,quantile_5,quantile_50,
+   quantile_95,annual_storage_summary,j,annual_storage_summary_list)
 
 #-------------------------------------------------------------------------------
 # correlate ground-based with vod-based water storage ------
@@ -679,9 +659,6 @@ spdf_vod <- SpatialPointsDataFrame(coords = coords_vod,
                                    data = data_vod, 
                                    proj4string = crs)
 
-
-library(FNN)
-
 #link ground-based coordinates to vod coordinates for storage
 nn1 = get.knnx(coordinates(spdf_vod), coordinates(spdf_ground), 1)
 vector <- data.frame(nn1[1])
@@ -715,15 +692,21 @@ sqrt(mean(vod_ground_lm$residuals^2))
 #plot it
 vod_vwc_plot <- ggplot(cbind_ground_vod,
                        aes(annual_storage,ground_vwc,fill=group)) +
-  scale_x_continuous(limits=c(0,12.9)) +
-  scale_y_continuous(limits=c(0,12.9)) +
+  #scale_x_continuous(limits=c(0,12.9)) +
+  #scale_y_continuous(limits=c(0,12.9)) +
+  scale_x_continuous(limits=c(0,22)) +
+  scale_y_continuous(limits=c(0,22)) +
   geom_point(size=7,pch=21,alpha = 0.60) +
   scale_fill_manual(values=c('Cropland'='purple','Savanna'='darkblue',
                              'Grassland'='lightblue','Forest'='orange','Shrubland'='red'),
                     labels=c('Grassland'='Grassland','Forest'='Forest',
                              'Shrubland'='Shrubland','Savanna'='Savanna')) +
-  annotate("text", x=8.75, y=9.8, label= "1:1 Line",size=5) +
-  annotate("text", x=2.25, y=10, label= "r = 0.72",size=8) +
+  # annotate("text", x=8.75, y=9.8, label= "1:1 Line",size=5) +
+  # annotate("text", x=2.25, y=10, label= "r = 0.72",size=8) +
+   annotate("text", x=15.2, y=18, label= "1:1 Line",size=8) +
+  annotate(geom = "text",
+           label = as.character(expression(paste(rho, " = 0.72"))),
+           parse = TRUE, x=2.25, y=17,size=8) +
   geom_abline(slope=1) +
   xlab('Satellite-based vegetation water storage (mm)') +
   ylab('Ground-based vegetation water storage (mm)') +
@@ -735,8 +718,9 @@ vod_vwc_plot <- ggplot(cbind_ground_vod,
     axis.ticks = element_line(color='black'),
     legend.key = element_blank(),
     legend.title = element_blank(),
-    legend.text = element_text(size=14),
-    legend.position = c(0.85,0.2),
+    legend.text = element_text(size=20),
+    #legend.position = c(0.85,0.2),
+    legend.position = c(0.77,0.2),
     strip.background =element_rect(fill="white"),
     strip.text = element_text(size=10),
     panel.background = element_rect(fill=NA),
@@ -806,10 +790,9 @@ pool_size <- ggplot(pool_means, aes(y = reorder(Pool,Size..km3.), x = Size..km3.
 png(height = 2000,width=4000,res=300,
     'manuscript_figures/storage_multipanel.png')
 
-print(plot_grid(pool_size,vod_vwc_plot,
-                labels = c('', ''),ncol = 2, nrow=1,
-                rel_widths = c(2.5,2.75),
-                rel_heights = c(1,1),label_size = 25))
+print(plot_grid(pool_size,vod_vwc_plot,labels = c('', ''),ncol = 2, nrow=1,
+                                   rel_widths = c(2.5,2.75),
+                                   rel_heights = c(1,1),label_size = 25))
 
 dev.off()
 
@@ -818,7 +801,7 @@ rm(ground_estimates,coords_ground,data,crs,spdf_ground_measurement,dry_biomass_o
    ground_estimates_2,dry_biomass_ground_vwc,spdf_ground,annual_strorage_2,
    coords_vod,data_vod,spdf_vod,nn1,vector,spdf_vod_df,new_df,spdf_ground_df,
    cbind_ground_vod,vod_vwc_plot,pools,pool_means,vegetation_pools,this_study,
-   pool_size,vod_vwc_plot)
+   pool_size,dry_biomass,data_ground,vod_ground_lm)
 
 #-------------------------------------------------------------------------------
 # calculate total amount of water in aboveground vegetation ------
@@ -870,11 +853,10 @@ print(lc_pool_size)
 
 dev.off()
 
-rm(lc_total_pools,km_cubed_by_pixel)
+rm(lc_total_pools,km_cubed_by_pixel,lc_pool_size)
 
 #-------------------------------------------------------------------------------
 # CV of storage and transit ------
-
 
 #CV of storage by LC type
 
@@ -901,16 +883,11 @@ cv_storage_lc$`Water storage` <- round(cv_storage_lc$`Water storage`,2)
 
 write.csv(cv_storage_lc,'manuscript_figures/storage_transp_lc_cv.csv')
 
-
 #cleanup
 rm(cv_data,sample_size,cv_storage_lc)
 
 #-------------------------------------------------------------------------------
 # ground-based transit compared to remote sensing transit broken up by season ----
-
-
-library(FNN)
-library(data.table)
 
 #import ground-based estimate
 isotope <- read.csv('data/isotope_data.csv')
@@ -958,7 +935,6 @@ for(i in seasons){
   nn1_transit = get.knnx(coordinates(spdf_transit_vod), coordinates(spdf_transit_ground), k=1)
   vector_transit <- data.frame(nn1_transit[1])
   vector_length <- as.numeric(nrow(vector_transit))
-  # vector_transit <- vector_transit[c(1:vector_length),]
   spdf_vod_transit_df <- data.frame(spdf_transit_vod)
   
   column <- seq(1,1,1) #can change depending on length of k
@@ -992,10 +968,10 @@ for(i in seasons){
   
   seasonal_turnover_comp[[i]] <- cbind_transit_ground_vod
   
+  
 }
 
 seasonal_turnover_comp_df <- do.call('rbind',seasonal_turnover_comp)
-rm(seasonal_turnover_comp)
 
 #plot it and save
 compare_transit <- ggplot(seasonal_turnover_comp_df,aes(x = turnover,
@@ -1041,12 +1017,10 @@ rm(isotope,isotope_2,seasons,seasonal_turnover_comp_df,
    turnover_2,crs,spdf_transit_ground,spdf_transit_ground_df,spdf_transit_vod,
    spdf_vod_transit_df,column,new_transit_df,new_transit_df_list,new_transit_df_list_df,
    cbind_transit_ground_vod,compare_transit,vector_transit,vector_transit_2,
-   nn1_transit)
+   nn1_transit,i,j,vector_length,seasonal_turnover_comp)
 
 #-------------------------------------------------------------------------------
 # spatial correlations of annual transit with climate ----
-
-group_2_names <- unique(annual_turnover_lc$group_2)
 
 #import climate data
 climate_data <- fread('data/climate.csv')
@@ -1089,16 +1063,11 @@ for(j in group_2_names){
   
 }
 
-#prep order for plots and turn into dataframe
-level_order <- c("Savanna", "Cropland", "Deciduous broadleaf forest",
-                 'Evergreen broadleaf forest','Grassland',
-                 'Mixed forest','Evergreen needleleaf forest',
-                 'Shrubland','Deciduous needleleaf forest')
 
 climate_cor_lc_df <- do.call('rbind',climate_cor_lc_list)
 
 #plot
-climate_corrlations <- ggplot(climate_cor_lc_df,aes(x=factor(land_cover,level=level_order),
+climate_corrlations <- ggplot(climate_cor_lc_df,aes(x=factor(land_cover,level=veg_order),
                                                     y=cor)) +
   facet_wrap(~climate_val,ncol=1) + 
   geom_hline(yintercept = 0) +
@@ -1132,7 +1101,7 @@ print(climate_corrlations)
 dev.off()
 
 #cleanup
-rm(climate_cor_lc_df,climate_cor_lc_list,cor_temp,cor_temp,climate_data)
+rm(climate_cor_lc_df,climate_cor_lc_list,cor_temp,climate_data)
 
 
 

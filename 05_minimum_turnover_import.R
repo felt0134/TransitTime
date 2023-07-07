@@ -1,16 +1,16 @@
 
 #import and wrangle minimum storage and turnover
 
-#land cover ID
-lc_id <- read.csv('data/land_cover_id.csv')
-#unique(lc_id$group)
-
 #set directories
 minimum_turnover_filepath <- 'data/turnover_from_python/minimum/land_cover_csvs/'
 minimum_turnover_dir <- dir(minimum_turnover_filepath, full.names = T)
 minimum_turnover_dir <- minimum_turnover_dir[-c(11,13,15,16,17)] #remove land classes with no data
 
-#loop through land cover types
+#now loop through each land cover file and import
+
+#annual turnover time and storage
+
+#import each land cover type individually 
 minimum_turnover_list <- list()
 for(i in minimum_turnover_dir[1:12]){
   
@@ -38,11 +38,11 @@ for(i in minimum_turnover_dir[1:12]){
 
 #bind all into one dataset
 minimum_turnover_lc <- do.call('rbind',minimum_turnover_list)
-rm(minimum_turnover_list)
 rownames(minimum_turnover_lc) <- NULL
 
 #cleanup
-rm(lc_filtered,lc,name)
+rm(lc_filtered,lc,name,minimum_turnover_filepath,minimum_turnover_dir,
+   minimum_turnover_list,i)
 
 #quick look
 print("minimum turnover quick look")

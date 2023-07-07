@@ -4,16 +4,16 @@
 #land cover ID
 lc_id <- read.csv('data/land_cover_id.csv')
 
-#set directories
+#set directories and land cover types to import
 annual_turnover_filepath <- 'data/turnover_from_python/annual/land_cover_csvs/'
 annual_turnover_dir <- dir(annual_turnover_filepath, full.names = T)
 annual_turnover_dir <- annual_turnover_dir[-c(11,13,15,16,17)] #remove land classes with no data
 
-#now loop through each land cover file and import, truncating by the 90th percentile for figures
+#now loop through each land cover file and import
 
 #annual turnover time and storage
 
-#import original LC
+#import each land cover type individually 
 annual_turnover_list <- list()
 for(i in annual_turnover_dir[1:12]){ 
   
@@ -41,11 +41,11 @@ for(i in annual_turnover_dir[1:12]){
 
 #bind all into one dataset
 annual_turnover_lc <- do.call('rbind', annual_turnover_list)
-rm(annual_turnover_list)
 rownames(annual_turnover_lc) <- NULL
 
 #cleanup
-rm(lc_filtered,lc,name)
+rm(lc_filtered,lc,name,annual_turnover_filepath,annual_turnover_dir,
+   annual_turnover_list,i)
 
 #only consider pixels with at least four months of data
 annual_turnover_lc <- annual_turnover_lc %>%

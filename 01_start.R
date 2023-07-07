@@ -2,16 +2,20 @@
 #clear work environment and set up libraries and functions
 rm(list=ls())
 
-#load packages
-pkgs <- c('data.table',
-          'rstudioapi','tidyverse','sp','rgdal','raster')
-lapply(pkgs, library, character.only = TRUE) 
+#load core packages 
+project_packages <- c('data.table','rstudioapi','tidyverse','sp','rgdal','raster','scico',
+          'cowplot','FNN')
+lapply(project_packages, library, character.only = TRUE) 
 
-# Set working directory to local directory
+#set working directory to local directory: file paths will be relative
 current_path <- getActiveDocumentContext()$path
 setwd(dirname(current_path))
 
-# Load in-house functions
-source('02_Functions2.R')
+#load custom functions for project
+source('02_functions.R')
 
-#small change
+#import annual transit time and storage data
+source('04_annual_turnover_storage_import.r')
+
+#import minimum transit time data
+source('05_minimum_turnover_import.r')
