@@ -1,0 +1,18 @@
+class_number,category,group,group_2,beta
+1,Evergreen needleleaf forest ,Forest,Evergreen needleleaf forest,0.1
+2,Evergreen broadleaf forest ,Forest,Evergreen broadleaf forest,0.1
+3,Deciduous needleleaf forest ,Forest,Deciduous needleleaf forest,0.12
+4,Deciduous broadleaf forest ,Forest,Deciduous broadleaf forest,0.12
+5,Mixed forests ,Forest,Mixed forest,0.11
+6,Closed shrublands ,Shrubland,Shrubland,0.11
+7,Open shrublands ,Shrubland,Shrubland,0.11
+8,Woody savannas ,Savanna,Savanna,0.11
+9,Savannas ,Savanna,Savanna,0.11
+10,Grasslands,Grassland,Grassland,0.13
+11,Permanent Wetlands,Wetland,Wetland,-1
+12,Croplands,Cropland,Cropland,0.11
+13,Urban and built-up ,Urban,Urban,0.1
+14,Cropland/natural vegetation mosaic ,Cropland,Cropland,0.11
+15,Snow and ice,Snow and Ice,Snow and Ice,0.1
+16,Barren or sparsely vegetated ,Barren,Barren,-1
+17,Water bodies ,Water,Water,-1

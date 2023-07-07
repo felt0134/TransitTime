@@ -1,0 +1,59 @@
+﻿Citiation,Land Cover Type,Location,Lat,Long,Month,Exclude,min.moisture,max.moisture,mean.moisture,sd.moisture,conversion of mean.moisture (if necessary),Methods (Gold standard: wet-dry/dry),notes,X2 checked?
+Iturrate-Garcia (2020) Biogeosciences,Tundra,"Yakutia, Siberia",70.816667,147.466667,August,No,0.091,0.66,0.34,0.13,,SWC was estimated as the difference between fresh and dry weight divided by the dry weight,tundra replaced by 'shrubland' in EASE grid land cover,yes
+Loram-Lourenco (2020) Front Plant Sci,Shrubland,"University of Rio Verde, Rio Verde, Goiás",-17.785889,-50.964064,February-April,Yes,0.403,0.66,0.534,0.076,,Water content (%)=100 x (fresh mass - dry mass)/dry mass,cropland,yes
+Tanase et al. (2020) Sci Total Environment,Forest,Romania (no precise location beyond region),45.109056,25.011917,April-October,No,0.446,0.758,0.552,0.073,,fresh-dry/dry,,yes - some ag
+Dias et al. (2015) iForest,Forest,"ZF2 Reserve, Manasu, Brazil",-2.6,-60.13,Two combined seasons,No,0.297,0.503,0.37,0.046,0.369,fresh mass (FM) and dry mass (DM) divided by the fresh mass ,,yes
+Osunkoya et al. (2007) Austral Ecology,Forest,"Ulu Temburong National Park, Brunei Darussalam",4.5,115.1666,September,No,,,0.41,,0.408,"""Wood water content was derived from the ratio of the difference between wet and dry mass to the wet mass""",,yes
+Colgan et al. (2014) Trees,Shrubland,"Pompey Property, Phalaborwa, South Africa",-23.83088,31.101345,May-July,No,0.21,0.6,0.349,0.13,0.348,(fresh weight - dry weight) / fresh weight,"Kruger national park area, which is a savanna",yes
+Werner and Murphy (2001) Australian Jrnl Botany,Shrubland,Kapalga Research Station ,-12.6648,132.3403,May,No,,,0.34,,0.339,fresh-dry/fresh,shrubland/savannas,yes
+Sticha et al. (2016) Journal of Forest Sciences,Forest,"South Bohemian Region, Czech Republic",49.379725,14.103459,January,Yes,,,0.64,1.58,0.636,MCwet = 100 × ((Wtwet – Wtdry)/Wtwet),this is at least half sorrounding cropland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Abisko, Sweden",68.35640247,18.69438999,August,No,,,0.669,0.156,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Alexandra Fiord, Ellesmere Island, Canada",78.8754,-75.7854,July,No,,,0.543,0.144,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Australian Alps,-36.41774208,148.363901,January,Yes,,,0.736,0.17,,,,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Buffalora,46.640315,10.24004,,Yes,,,0.632,0.042,,,,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Caucasus Mountains,43.44036794,41.69190145,,No,,,0.755,0.095,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Choerbschhorn, Switzerland",46.79143,9.76818,,No,,,0.77,0.054,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Fluelapass,46.75282,9.9459,,No,,,0.702,0.116,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Julierpass,46.47522,9.69315,,No,,,0.712,0.135,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Kilpisjarvi, Finland",69.06228807,20.81953026,July,No,,,0.608,0.129,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Lagrev,46.449685,9.75531,,No,,,0.528,0.033,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Mot Dal Gajer,46.69103,10.3281,,Yes,,,0.668,0.111,,,,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Piz Ela, Switzerland",46.58881,9.72005,,No,,,0.67,0.084,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Pulsulezza,46.69747,10.02066,,No,,,0.738,0.14,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Qikiqtaruk-Herschel Island, Canada",69.57673424,-138.9155257,August,No,,,0.603,0.179,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Strelapass,46.80936,9.7953,,No,,,0.671,0.046,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,"Victoria, Australia",-36.92719258,147.2397552,,Yes,,,0.664,0.119,,,ease lc id is shrubland,yes
+Bjorkman et al. (2018) Global Ecology and Biogeography,Tundra,Witihureli,46.75236,9.8672,,No,,,0.815,0.017,,,ease lc id is shrubland,yes
+Goldsmith et al. (In Prep),Forest,"Estate Forest, High Point, North Carolina",35.9978944,-80.0893959,July,Yes,,,0.777,0.278,,,this is mostly sorrounding cropland,yes
+Goldsmith et al. (In Prep),Forest,"Flagstaff, Arizona",35.21892,-111.679024,August,No,,,0.581,,,,national forest,yes
+Goldsmith et al. (In Prep),Forest,"MoonHollow, Virginia",37.196295,-80.477158,August,No,,,0.943,0.503,,,some cropland,yes
+Goldsmith et al. (In Prep),Forest,"DeMeritt Forest, Orono, ME",44.9092166,-68.6626296,July,No,,,0.954,,,,some cropland,yes
+Goldsmith et al. (In Prep),Forest,"Athens, Georgia, UGA Whitehall Forest",33.5254,-83.213,July,No,,,0.85,,,,some cropland,yes
+Goldsmith et al. (In Prep),Forest,"Whittell Forest & Recreation Area, Reno, Nevada",39.2465,-119.8733,September,No,,,0.919,0.413,,,,yes
+Goldsmith et al. (In Prep),Forest,"Mt. San Jacinto State Park, Idyllwild, California ",33.759,-116.72,July,No,,,1.104,0.452,,,,yes
+Goldsmith et al. (In Prep),Forest,"Vollheim Property (Private Land), Hardwick, MA",42.3656,-72.187869,August,No,,,0.786,0.266,,,some cropland,yes
+TRY,Grassland,,31.41666667,92,,No,,,2.34,,,,,yes
+TRY,Grassland,,32.88333333,102.6,,No,,,1.42,,,,,yes
+TRY,Grassland,,43.38911667,116.8862667,,No,,,2.87,,,,,yes
+TRY,Grassland,,43.69475,116.6353,,No,,,1.77,,,,,yes
+TRY,Grassland,,43.89948333,115.3208833,,No,,,1.57,,,,,yes
+TRY,Grassland,,43.91105,116.3116333,,No,,,0.68,,,,,yes
+TRY,Grassland,,43.93665,114.6117667,,No,,,0.86,,,,,yes
+TRY,Grassland,,44.067,88.078,,No,,,1.56,,,,,yes
+TRY,Grassland,,44.12178333,121.7654833,,No,,,1.5,,,,,yes
+TRY,Grassland,,46.396,85.945,,No,,,2.02,,,,,yes
+TRY,Grassland,,47.15543333,88.70231667,,No,,,2.52,,,,,yes
+Goldsmith et al. (In Prep),Forest,Aspen Grove,65.15565,-147.52756,June,No,,,0.775958333,0.159605895,,,,yes
+Goldsmith et al. (In Prep),Forest,CCEW-WIL,39.345,-123.754,May,No,,,1.18721875,0.601448721,,,,yes
+Goldsmith et al. (In Prep),Forest,Chino Hills State Park,33.915173,-117.771203,March,Yes,,,0.7835625,0.116351175,,,urban,yes
+Goldsmith et al. (In Prep),Forest,Giant White Pine Camground ,47.013889,-88.979,June,No,,,1.014354839,0.534343432,,,,yes
+Goldsmith et al. (In Prep),Forest,Hyalite Canyon,45.4831812,-110.9584493,July,No,,,1.04909375,0.332001104,,,,yes
+Goldsmith et al. (In Prep),Forest,Indiancave,40.247,-95.537,May,Yes,,,0.717033333,0.218706934,,,agriculture,yes
+Goldsmith et al. (In Prep),Forest,LSU Agricultural Center,30.284083,-91.08942,April,Yes,,,0.87325,0.312771276,,,agriculture,yes
+Goldsmith et al. (In Prep),Forest,Misery Bay,46.999,-88.979,May,No,,,1.14125,0.147092488,,,,yes
+Goldsmith et al. (In Prep),Forest,Montgomery Botanical Garden,25.6636,-80.2805,March,Yes,,,0.87390625,0.400223999,,,in middle of city,yes
+Goldsmith et al. (In Prep),Forest,Palomar Mountain State Park,33.34059,-116.901635,April,No,,,1.2494375,0.524022589,,,need to override land cover class,yes
+Goldsmith et al. (In Prep),Forest,UC Santa Cruz,37.004152,-122.056604,May,No,,,1.355,0.232434937,,,,yes
+Goldsmith et al. (In Prep),Forest,UMD Bagley,46.8241,-92.0868,June,Yes,,,0.909839286,0.296388675,,,city/agriculutre,yes
+Goldsmith et al. (In Prep),Forest,White Ranch,30.14626,-98.11965,July,Yes,,,0.46425,0.167130089,,,shrubland/scrub habitat,yes
+Goldsmith et al. (In Prep),Forest,UW Madison Arboretum,43.042518,-89.423548,July ,Yes,,,0.646555556,0.172115632,,,in middle of city,yes
