@@ -1,0 +1,14 @@
+Study,Location,Latitude,Longitude,Month,Land cover type,Mean transit time (days),Std. deviation transit time (days),Notes,season,Drop?,notes
+James et al. (2003) Oecologia,"Parque Natural Metropolitano, Panama City, Republic of Panama",8.992407,-79.546627,January-April,Forest,2.75,1.71,,spring,No,Very close to a city
+"Meinzer et al. (2006) Plant, Cell and Environment","Wind River, Washington, USA",45.808914,-121.986254,August,Forest,12.25,8.56,,summer,No,
+Mei et al. (2019) Forests,"Bogor Agricultural University (IPB) Botanical Garden, Indonesia",-6.597778,106.799312,March/April,Botanical Garden,1.17,0.29,,spring,Yes,In the middle of a city
+Graefe et al. (2019) Trees,"Laipuna, Ecuador",,,March,Forest,1.22,0.35,Coordinates are not possible. Publication Error,spring,No,
+Gaines et al. (2016) Ecohydrology,"Shale Hills Critical Zone Observatory, Petersburg, PA, USA",40.666732,-77.902647,July,Forest,3.25,2.2,,summer,No,
+Schwendenmann et al. (2010) Tree Physiology,"Leyte, Phillipines",10.736,124.904,June/September,Forest,1.45,1.1,,summer,No,"R thinks this is the ocean, adjust from 124.804 to 124.904"
+Schwendenmann et al. (2010) Tree Physiology,"Central Sulawesi, Indonesia",-1.5651,120.0248,January/February,Forest,1.7,n/a,,winter,No,corrected from 1.552 120.02
+Marc and Robinson (2004) Journal of Hydrology,"Sapine Watershed, Mont Lazere, France",44.425243,3.737377,July,Forest,4,n/a,,summer,No,
+"Wenninger and Brandes (unpublished) in Brandes et al. (2007) Plant, Cell and Environment","Hartheim, Germany",47.933333,7.616667,Not available,Forest,5,n/a,Coarse estimate,none,No,No season provided
+Schwinning et al. (2002) Oecologia,"Canyonlands National Park, Utah, USA",38.162498,-109.742502,May,Shrublands,1,n/a,Coarse estimate,spring,No,Barren land - canyonlands
+Kulmatiski et al. (2010) New Phytologist,"Pretoriuskop, Kruger National Park, South Africa",-25.2076,31.2832,November,Shrublands,1,n/a,Coarse estimate,fall,No,
+Lambs and Saenger (2011) Rapid Comms Mass Spectrometry,"Chirongui Bay on Mayotte, Comores Islands",-12.918099,45.17071,March/April,Forest,3.5,n/a,Coarse estimate,spring,No,"R thinks this is the ocean, adjust from 45.15071 to 45.170710. This is on an island for which we don’t have data"
+Kahmen et al. (2021) Ecohydrology,"Hofstetten, Switzerland",47.437778,7.775278,June/July,Forest,4.02,3.2,Coarse estimate,summer,No,
