@@ -1,80 +1,74 @@
-# generate key derived datasets needed for ground-based comparisons 
 
-#-------------------------------------------------------------------------------
-# Load in and format TRY leaf water content data -----
+# R code used to generate datasets used for ground-based comparisons of water storage.
+# Running this code is not necessary and is primarily here for documentation purposes.
 
-#get TRY leaf water content data and merge it with a taxonomy data
+library(taxize)
+
+# Get leaf water content data for grassland land cover ---------
+
+# get TRY leaf water content data and merge it with a taxonomy data
 # base that can let us know families of the species
 
-#load original data downloaded from TRY
-water_content_try<-read.delim('./../../Data/water.content.try/14187.txt')
-#head(water.content.try)
+#load original data downloaded from TRY plant trait database 
+#(https://www.try-db.org/TryWeb/Home.php)
 
-#trim down columns
+water_content_try <- read.delim('data/supporting_data/14187.txt')
+
+#trim down number of columns
 water_content_try <- water_content_try %>% 
-  select(SpeciesName,DatasetID,ObservationID, DataName,OrigValueStr,OrigUnitStr)
+  dplyr::select(SpeciesName,DatasetID,ObservationID, DataName,OrigValueStr,
+                OrigUnitStr)
 
 #sort data IDs and convert to long form
 
-#isolate ldmc
+#isolate ldmc,reduce and rename column names,change water content to numeric 
+#and round to two decimal places
 water_content_try_id <- water_content_try %>%
-  dplyr::filter(DataName=='Leaf water content per leaf dry mass')
-#head(water_content_try_id)
-
-#reduce and rename column names
-water_content_try_id <- water_content_try_id %>% 
-  select(SpeciesName,DatasetID,ObservationID,DataName,OrigValueStr,OrigUnitStr) %>%
-  rename('water_content' = 'OrigValueStr',
-         'units' = 'OrigUnitStr')
-
-#change water content to numeric and round to two decimal places
-water_content_try_id$water_content <- 
-  as.numeric(as.character(water_content_try_id$water_content)) #make numeric
-
-water_content_try_id$water_content <- 
-  round(water_content_try_id$water_content,2) #round 2 decimals
-#summary(water_content_try_id)
+  dplyr::filter(DataName == 'Leaf water content per leaf dry mass') %>%
+  dplyr::select(SpeciesName,DatasetID,ObservationID,DataName,OrigValueStr,
+                OrigUnitStr) %>%
+  dplyr::rename('water_content' = 'OrigValueStr',
+         'units' = 'OrigUnitStr') %>%
+  drop_na() %>%
+  dplyr::filter(water_content != 'NULL') %>%
+  dplyr::mutate_at('water_content',as.numeric) %>%
+  dplyr::mutate(water_content = round(water_content,2)) 
 
 #isolate latitude
-water_content_try_lat <-  water_content_try %>%
-  dplyr::filter(DataName=='Latitude') %>%
-  select(SpeciesName, DatasetID, ObservationID,OrigValueStr) %>%
-  rename('Latitude' = 'OrigValueStr') %>%
+water_content_try_lat <- water_content_try %>%
+  dplyr::filter(DataName == 'Latitude') %>%
+  dplyr::select(SpeciesName, DatasetID, ObservationID,OrigValueStr) %>%
+  dplyr::rename('Latitude' = 'OrigValueStr') %>%
   dplyr::filter(!DatasetID =='212') #remove 212
 
 #isolate longitude
-water_content_try_lon <-  water_content_try %>%
-  dplyr::filter(DataName=='Longitude') %>%
-  select(SpeciesName, DatasetID, ObservationID,OrigValueStr) %>%
-  rename('Longitude' = 'OrigValueStr') %>%
+water_content_try_lon <- water_content_try %>%
+  dplyr::filter(DataName == 'Longitude') %>%
+  dplyr::select(SpeciesName, DatasetID, ObservationID,OrigValueStr) %>%
+  dplyr::rename('Longitude' = 'OrigValueStr') %>%
   dplyr::filter(!DatasetID =='212') #remove 212
 
-#bind the lat and lon
+#merge the lat and lon
 lat_lon_try <- merge(water_content_try_lat,water_content_try_lon,
                      by=c('DatasetID','ObservationID','SpeciesName'))
-#head(lat_lon_try,1)
 
 #merge with water content
 lat_lon_try_water_content <- merge(lat_lon_try,water_content_try_id,
                                    by=c('DatasetID','ObservationID','SpeciesName'))
-#head(lat_lon_try_water_content,1)
 
 #reorder and rename columns
 lat_lon_try_water_content <- lat_lon_try_water_content %>%
-  select("Longitude", "Latitude",'SpeciesName', "water_content",
+  dplyr::select("Longitude", "Latitude",'SpeciesName', "water_content",
          "units", "DatasetID",'ObservationID') %>%
-  rename("x" = "Longitude",
-         "y" = "Latitude")
+  dplyr::rename("x" = "Longitude", "y" = "Latitude")
 
+#cleanup
+rm(water_content_try_lat,water_content_try_lon,water_content_try_id,
+   lat_lon_try,water_content_try)
 
-#head(lat_lon_try_water_content,1)
-
-#get family names
+#get family names using taxize package (you need to pay attention to this loop)
 
 species <- unique(lat_lon_try_water_content$SpeciesName)
-# length(species)
-
-library(taxize)
 
 species_list<-list()
 for(i in species){
@@ -84,128 +78,138 @@ for(i in species){
   
 }
 
+rm(i,try_taxonomy)
+
 species_df <- do.call("rbind", species_list)
 
 colnames(species_df) <- c('db','SpeciesName','genus','family', 'order')
-#head(species_df)
 
-#merge them
-species_water_content_merge<-merge(species_df,lat_lon_try_water_content,by=c('SpeciesName'))
+#merge species dataframe and water content dataframe
+species_water_content_merge <- merge(species_df,lat_lon_try_water_content,
+                                   by=c('SpeciesName'))
 
-#save this
-write.csv(species_water_content_merge,'./../../../Data/water.content.try/water_content_taxonomy_global_dataset.csv')
+#cleanup
+rm(species_list)
 
 
-#-------------------------------------------------------------------------------
-# Get leaf water content data for grassland land cover (NEEDS WORK) ---------
-
-# get leaf water content estimates for the grassland land cover
+#Now create a dataframe with list of herbaceous families to be double checked
 
 #set projection
 projection <- '+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0'
 
-#step 1: create a dataframe with list of herbaceous families to be double checked
-
-derived_wc <- read.csv('./../../Data/water.content.try/water_content_taxonomy_global_dataset.csv')
-
-# get name of all herbs (x2 check where this came from)
-herb_family<-read.csv('./../../Data/water.content.try/family.list.2.csv')
-herb_family<-subset(herb_family,Herb.=='Yes')
-family.list <- unique(herb_family$family)
+# get names of all herbaceous families from a separately compiled dataset
+herb_family <- read.csv('data/supporting_data/family.list.2.csv')
+herb_family <- subset(herb_family,Herb.=='Yes')
+family_list <- unique(herb_family$family)
 
 
 #loop through and get all herb families
-herbs.list <- list()
+herbs_list <- list()
 
 for(i in family.list){
   
-  herbs<-subset(derived_wc,family==i)
-  herbs.list[[i]] <- herbs
+  herbs <- subset(species_water_content_merge,family == i)
+  herbs_list[[i]] <- herbs
   
 }
 
-herbs.list.df <- do.call("rbind",herbs.list)
-length(unique(herbs.list.df$SpeciesName))
-#about 300 more observations than just poa
+#convert list to a dataframe
+herbs_list_df <- do.call("rbind",herbs_list)
 
-#create and save a list of mostly 'herb species' to X2 check which species are herb
-mostly.herb.list <- data.frame(unique(herbs.list.df$SpeciesName))
-colnames(mostly.herb.list) <- 'Species'
-#write.csv(mostly.herb.list,'./../../../Data/Derived_Data/Land_Cover_Water_Content/mostly_herb_X2_check.csv')
+#cleanup
+rm(herb_family,i,herbs,herbs_list,species_df)
 
-#after checking which species are truly herbaceous in the mostly_herb_X2_check data frame,
-#now you can load in the X2 checked data frame
-herbx2.list <-read.csv('./../../Data/water.content.try/mostly_herb_X2_check.csv')
-herbx2.list <- subset(herbx2.list,Herbaceous.=='Yes')
-herbx2.list <- herbx2.list[c(2)]
+#create and save a list of mostly 'herb species' to later X2 check which species 
+#are herbaceous
+
+mostly_herb_list <- data.frame(unique(herbs_list_df$SpeciesName))
+colnames(mostly_herb_list) <- 'Species'
+
+#running the code below will overwrite the file in the project, which has information
+#as to whether each species was truly herbaceous, after double checking.
+#write.csv(data/supporting_data/mostly.herb.list,'mostly_herb_X2_check.csv')
+
+#cleanup
+rm(mostly_herb_list,herbs_list_df)
+
+#after checking which species are truly herbaceous, you can load in the 
+#X2 checked data frame, with an added 'Herbaceous' column.
+herbx2 <- read.csv('data/supporting_data/mostly_herb_X2_check.csv')
+herbx2 <- subset(herbx2,Herbaceous. == 'Yes')
+herbx2 <- herbx2[c(2)]
 
 #now loop through to get X2 checked herb species
-herbx2.list <- unique(herbx2.list$Species)
+herbx2 <- unique(herbx2$Species)
 
-herbsx2.list <- list()
+herbsx2_list <- list()
 
-for(i in herbx2.list){
+for(i in herbx2){
   
-  herbs<-subset(derived_wc,SpeciesName==i)
-  herbsx2.list[[i]] <- herbs
+  herbs <- subset(species_water_content_merge,SpeciesName == i)
+  herbsx2_list[[i]] <- herbs
   
 }
 
-herbsx2.list.df <- do.call("rbind",herbsx2.list)
-head(herbsx2.list.df,1)
+#convert list into datadframe
+herbsx2_list_df <- do.call("rbind",herbsx2_list)
 
-#take the means of each coordinate and turn into raster (do this once)
-#derived_wc_mean<-aggregate(water.content~x+y,mean,data=derived_wc)
+#cleanup
+rm(i,herbs,herbsx2_list)
+
+#take the means of each coordinate and turn into raster 
 
 #just poa coordinate means
-derived_wc_poa <- derived_wc %>% filter(family=='Poaceae')
-derived_wc_mean_poa<-aggregate(water.content~x+y,mean,data=derived_wc_poa)
-head(derived_wc_mean_poa,1)
-
+derived_wc_poa_mean <- species_water_content_merge %>% 
+  filter(family == 'Poaceae') %>%
+  group_by(x,y) %>%
+  summarise(water_content = mean(water_content))
 
 #all other herb coordinate means
-derived_wc_mean_herbs<-aggregate(water.content~x+y,mean,data=herbsx2.list.df)
-head(derived_wc_mean_herbs,1)
+derived_wc_mean_herbs <- aggregate(water_content~x+y,mean,data=herbsx2_list_df)
 
 #bind Poa and all other herbaceous species (pixel averages) to have all herb species
-derived_wc_mean <- rbind(derived_wc_mean_poa,derived_wc_mean_herbs)
+derived_wc_mean <- rbind(derived_wc_poa_mean,derived_wc_mean_herbs)
 
-#final average in case there were overlapping pixels
-derived_wc_mean_2 <- aggregate(water.content~x+y,mean,data=derived_wc_mean)
-head(derived_wc_mean_2,1)
-plot(y~x,data=derived_wc_mean_2)
-#319 observations
+# do a final average because of overlapping pixels
+derived_wc_mean_2 <- aggregate(water_content~x+y,mean,data=derived_wc_mean)
 
+#cleanup
+rm(derived_wc_mean,derived_wc_mean_herbs,derived_wc_poa_mean,herbsx2_list_df)
 
-#new approach using nearest spatial points to the land cover estimates
+#use nearest spatial points to filter to actual grassland land cover type
 
-#import data
-source('annual_turnover_storage_import.r')
+#import storage data (if you have not already)
+source('04_annual_turnover_storage_import.r')
 
+#ensure all variables are numeric
+derived_wc_mean_2 <- derived_wc_mean_2 %>%
+  dplyr::mutate_at('x',as.numeric) %>%
+  dplyr::mutate_at('y',as.numeric)
+  
 #turn ground data to spdf
 coords_ground <- derived_wc_mean_2[ , c("x", "y")]   # coordinates
 data_ground   <- data.frame(derived_wc_mean_2[c(3)])          # data
-crs    <- CRS('+proj=longlat +datum=WGS84 +no_defs') # proj4string of coords
+crs <- CRS('+proj=longlat +datum=WGS84 +no_defs') # proj4string of coords
 
-spdf_ground <- SpatialPointsDataFrame(coords      = coords_ground,
-                                      data        = data_ground, 
+spdf_ground <- SpatialPointsDataFrame(coords = coords_ground,
+                                      data = data_ground, 
                                       proj4string = crs)
 
 #turn vod raster data to spatial points DF
 annual_strorage_2 <- annual_turnover_lc %>%
-  select(lon,lat,annual_storage,group,group_2)
+  dplyr::select(lon,lat,annual_storage,group,group_2)
+
 rownames(annual_strorage_2) <- NULL
+rm(annual_turnover_lc)
 
 # prepare coordinates, data, and proj4string
 coords_vod <- annual_strorage_2[ , c("lon", "lat")]   # coordinates
 data_vod   <- annual_strorage_2[ , 3:5]          # data
 
 # make the SpatialPointsDataFrame object
-spdf_vod <- SpatialPointsDataFrame(coords      = coords_vod,
-                                   data        = data_vod, 
+spdf_vod <- SpatialPointsDataFrame(coords = coords_vod,
+                                   data = data_vod, 
                                    proj4string = crs)
-
-library(FNN)
 
 #link ground-based coordinates to vod coordinates for storage
 nn1 = get.knnx(coordinates(spdf_vod), coordinates(spdf_ground), 1)
@@ -214,64 +218,31 @@ vector <- vector[c(1:nrow(vector)),]
 spdf_vod_df <- data.frame(spdf_vod)
 new_df <- spdf_vod_df[c(vector),]
 new_df <- new_df %>%
-  select(annual_storage,group,lon,lat)
+  dplyr::select(annual_storage,group,lon,lat)
 
-points(lat~lon,data=new_df,add=T,col='red')
+#check that it worked
+#points(lat~lon,data=new_df,add=T,col='red')
 
+#bind and filter to crop and grassland
 cbind_ground_vod_herb <- cbind(new_df,derived_wc_mean_2)
-cbind_ground_vod_herb <- cbind_ground_vod_herb %>%
-  filter(group==c('Cropland','Grassland'))
 
 cbind_ground_vod_herb <- cbind_ground_vod_herb %>%
-  select(x,y,water.content,group)
+  dplyr::filter(group == c('Cropland','Grassland')) %>%
+  dplyr::select(x,y,water_content,group)
+
 rownames(cbind_ground_vod_herb) <- NULL
 
-#create file for double checking
-write.csv(cbind_ground_vod_herb,
-          './../../Data/water.content.try/crop_grassland_mean_water_content.csv')
+#below creates a file for double checking that sites are intact grasslands and then 
+#incorporate those sites into main water content dataframe. The code is commented
+#out because it is primarily for documentation purposes.
 
+# write.csv(cbind_ground_vod_herb,
+#           'Data/supporting_data/water.content.try/crop_grassland_mean_water_content.csv')
 
-#stopped here. This same workflow can be implemented for the other water content data we have.
-
-
-#olf approach to filter by making land cover a raster
-
-
-
-#STOPPED HERE
-
-#all mostly herbs
-
-est_fix_wc_grid<-fix_grid(derived_wc_mean)
-plot(est_fix_wc_grid)
-proj4string(est_fix_wc_grid) <- CRS(projection)
-
-grasslands<-raster('./../../../Data/Derived_Data/Land_Cover_Distributions/Grassland.tif')
-
-#get into the same projection
-proj4string(grasslands) <- CRS(projection)
-
-#resample so can align
-resample_test<-resample(grasslands,est_fix_wc_grid)
-
-plot(resample_test)
-plot(est_fix_wc_grid)
-
-#turn into data frame and merge
-biome_raster_df<-data.frame(rasterToPoints(resample_test))
-est_fix_wc_grid_df<-data.frame(rasterToPoints(est_fix_wc_grid))
-
-test_merge<-merge(biome_raster_df,est_fix_wc_grid_df,by=c('x','y'))
-test_merge <-test_merge[c(1,2,4)]
-colnames(test_merge) <- c('x','y','average.water.content')
-test_merge$average.water.content <- round(test_merge$average.water.content,2)
-hist(test_merge$average.water.content)
-summary(test_merge)
-
-#save as csv
-
-# Poa and herb X2 checked
-write.csv(test_merge,'./../../../Data/Derived_Data/Land_Cover_Water_Content/grassland_water_content_poa_herbX2.csv')
+#cleanup
+rm(annual_strorage_2,cbind_ground_vod_herb,coords_ground,coords_vod,crs,
+   data_ground,data_vod,derived_wc_mean_2,lc_id,new_df,nn1,spdf_ground,
+   spdf_vod,spdf_vod_df,species_water_content_merge)
 
 #-------------------------------------------------------------------------------
 # Import and aggregate Aboveground Biomass Density for year 2010 --------
@@ -279,37 +250,43 @@ write.csv(test_merge,'./../../../Data/Derived_Data/Land_Cover_Water_Content/gras
 #file source:
 #https://uwmadison.app.box.com/s/xj3fnde17yazlogbiq740da2mrv2ma61
 
-#upload original
+#upload native resolution aboveground biomass density data
 aboveground_biomass_density <- raster('./../../../Data/Biomass/Biomass_Density_Spawn/AFELTON_agbDW_Mgha_x10_300m.tif')
-#plot(aboveground_biomass_density)
 
-#aggregate 30X to match resolution of canopy transpiration data
+#aggregate 30X to match (approximately) the resolution of the 9 km data
 aboveground_biomass_density_30x_aggregate <- raster::aggregate(aboveground_biomass_density,fact=30)
-#plot(aaboveground_biomass_density_30x_aggregate)
 
 #save to file
-writeRaster(aboveground_biomass_density_30x_aggregate,'./../../../Data/Derived_Data/Biomass/aboveground_dry_biomass_density_aggregate_30X.tif')
+writeRaster(aboveground_biomass_density_30x_aggregate,'aboveground_dry_biomass_density_aggregate_30X.tif')
+
+#cleanup
+rm(aboveground_biomass_density,aboveground_biomass_density_30x_aggregate)
+
 #-------------------------------------------------------------------------------
 # Get leaf water content data for tundra land cover ------
 
-tundra_data<-read.csv('./../../../Data/tundra_trait_team/TTT_cleaned_dataset.csv')
-head(tundra_data)
-unique(tundra_data$Trait)
-tundra_ldmc <- subset(tundra_data,
-                      Trait="Leaf dry mass per leaf fresh mass (Leaf dry matter content, LDMC)")
-head(tundra_ldmc)
-hist(tundra_ldmc$Value)
+#import tundra trait team dataset:
 
-tundra_ldmc_averaged <- aggregate(Value~Latitude + Longitude,mean,data=tundra_ldmc)
-summary(tundra_ldmc_averaged)
+# Bjorkman, Anne D., et al. 
+# "Tundra Trait Team: A database of plant traits spanning the tundra biome." 
+# Global Ecology and Biogeography 27.12 (2018): 1402-1411.
 
+tundra_data <- read.csv('TTT_cleaned_dataset.csv')
 
-#unclear to what is mean by fresh mass. How you can have more dry mass than 
-#fresh mass (dry+water) or is fresh mass just water?
+#filter to and summarise ldmc by site name. 9km pixel sizes are sufficiently
+#large such that we can summarise to the site level as opposed to specific
+#coordinates within a site.
 
-#assume LDMC = 1.2 (1.2 g dry mass/1g fresh mass)
-#So it is either:
-#1/1.2 = water divided by dry mass = 0.83 (assuming fresh mass=everything)
-#((1.2+1) -1.2)/(1.2+1) = 0.45 (assuming fresh mass = water)
-#((1.2+1) -1)/(1.2+1) = 0.55 (must be this one?)
+tundra_ldmc_averaged <- tundra_data %>%
+  dplyr::filter(Trait == "Leaf dry mass per leaf fresh mass (Leaf dry matter content, LDMC)") %>%
+  group_by(SiteName) %>%
+  dplyr::summarise(Value = mean(Value))
+
+# these sites then get converted to relative water content, put into main water 
+# content dataframe,and double checked using google earth engine to ensure its
+# an intact tundra system, which gets classified as a shrubland.
+
+#cleanup
+rm(tundra_data,tundra_ldmc_averaged)
+
 #-------------------------------------------------------------------------------
