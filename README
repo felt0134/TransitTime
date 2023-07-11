@@ -1,31 +1,35 @@
 
+Author: Andrew J. Felton
+Date: 7/11/2023
+
 This R project contains the primary code and data used for data production,manipulation,
-and analysis and figure production or the study entitled:
+and analysis and figure production for the study entitled:
 
 "Global estimates of the storage and transit time of water through vegetation"
 
-Please not that the "supporting code" folder also contains the python scripts used
-to generate aboveground water storage and transit time estimate for the study. 
-The ultimate output from those scripts can be found in the "turnover_from_python"
-folder, which contains annual, monthly, and seasonal estimates of aboveground storage
-and transit time in both .nc and .csv file formats. The 2016 vegetation optical depth
-data used for those analyses can be found in a Zenodo repostiry:
+Please note that 'turnover' and 'transit' are used
+interchangeably in this project.
 
-https://zenodo.org/record/5579549#.YZvbPS1h1QI
+Data information:
 
-The monthly-scale canopy transpiration data used can be found here:
+The data folder contains key data sets used for analysis. In particular:
 
-https://drive.google.com/file/d/12pbcwr7wZjH-IhTcN48tvo1A_oAPEl-k/view
+"data/turnover_from_python/annual/annual_turnover.nc" contains a global array
+summarizing annual transit, storage, canopy transpiration and number of
+months of data. This data is also available is seperate .csv files for each land
+cover type. The same can be found for the minimum, monthly, and seasonal transit
+time found in their respective folders. These data were produced using the python
+code found in the "supporting_code" folder. The remaining files in the "data" and
+"data/supporting_data"" folder primarily contain ground-based estimates of
+storage and transit found in public databases or through a literature search.
 
-Please note, both the python and R scripts use relative filepaths to import data.
+#Code information
 
-The climate data used can be found here:
-
-XXX
+Python scripts can be found in the "supporting_code" folder.
 
 Each R script in this project has a particular function:
 
-01_start.R: This script loads the R packages used int he analysis, sets the
+01_start.R: This script loads the R packages used in the analysis, sets the
 directory, and imports the user-created functions for the project in the 
 02_functions.R script. This script can also download the annual and minumum 
 transit datasets, which are core to the analyses.
@@ -38,12 +42,13 @@ the data needed to calculate ground-based estimates of aboveground water storage
 storage data for each landcover type.
 
 05_annual_turnover_storage_import.R: This script imports the minimum turnover and
-storage data for each landcover type. Miniomum is defined as the lowest monthly
+storage data for each landcover type. Minimum is defined as the lowest monthly
 estimate.
 
 06_figures_tables.R: This is the main workhouse. This script generates the key 
 figures and summary statstics used in the study that the get saved in the 
-manuscripts_figures folder. Maps were produced using Python.
+manuscript_figures folder. Maps were produced using Python code found in the
+"supporting_code"" folder
 
 
 
