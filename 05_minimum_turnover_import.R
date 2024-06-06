@@ -1,8 +1,8 @@
 
-#import and wrangle minimum storage and turnover
+#import and wrangle minimum storage and turnover. Run this 01_start.R.
 
 #set directories
-minimum_turnover_filepath <- 'data/turnover_from_python/minimum/land_cover_csvs/'
+minimum_turnover_filepath <- 'data/turnover_from_python/updated/minimum/land_cover/csv/'
 minimum_turnover_dir <- dir(minimum_turnover_filepath, full.names = T)
 minimum_turnover_dir <- minimum_turnover_dir[-c(11,13,15,16,17)] #remove land classes with no data
 
@@ -20,13 +20,13 @@ for(i in minimum_turnover_dir[1:12]){
   #filter out NA, inf, and zero values
   lc_filtered <- lc %>%
     dplyr::filter(lc01 != 'NA') %>%
-    dplyr::filter(minimum_turnover > 0) %>%
-    dplyr::filter(minimum_turnover != 'Inf')
+    dplyr::filter(Turnover > 0) %>%
+    dplyr::filter(Turnover != 'Inf')
   
   #get land cover ID
   name <-
     gsub(
-      'data/turnover_from_python/minimum/land_cover_csvs//landclass.','',i)
+      'data/turnover_from_python/updated/minimum/land_cover/csv//landclass.','',i)
   name <- gsub('.3856x1624.bin.nc.csv','', name)
   lc_filtered$class_number <- as.integer(name)
   lc_filtered <- merge(lc_filtered, lc_id, by = c('class_number'))
@@ -46,4 +46,4 @@ rm(lc_filtered,lc,name,minimum_turnover_filepath,minimum_turnover_dir,
 
 #quick look
 print("minimum turnover quick look")
-print(quantile(minimum_turnover_lc$minimum_turnover,probs = c(0.05,0.5,0.95)))
+print(quantile(minimum_turnover_lc$Turnover,probs = c(0.05,0.5,0.95)))
