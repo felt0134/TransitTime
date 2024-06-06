@@ -1,27 +1,18 @@
 
 Author: Andrew J. Felton
-Date: 7/11/2023
+Date: 5/5/2024
 
-This R project contains the primary code and data used for data production,manipulation,
-and analysis and figure production for the study entitled:
+This R project contains the primary code and data (following pre-processing in python) used for data production, manipulation, visualization, and analysis and figure production for the study entitled:
 
 "Global estimates of the storage and transit time of water through vegetation"
 
-Please note that 'turnover' and 'transit' are used
-interchangeably in this project.
+Please note that 'turnover' and 'transit' are used interchangeably in this project.
 
 Data information:
 
 The data folder contains key data sets used for analysis. In particular:
 
-"data/turnover_from_python/annual/annual_turnover.nc" contains a global array
-summarizing annual transit, storage, canopy transpiration and number of
-months of data. This data is also available is seperate .csv files for each land
-cover type. The same can be found for the minimum, monthly, and seasonal transit
-time found in their respective folders. These data were produced using the python
-code found in the "supporting_code" folder. The remaining files in the "data" and
-"data/supporting_data"" folder primarily contain ground-based estimates of
-storage and transit found in public databases or through a literature search.
+"data/turnover_from_python/updated/annual/multi_year_average/average_annual_turnover.nc" contains a global array summarizing five year (2016-2020) averages of annual transit, storage, canopy transpiration, and number of months of data. This is the core dataset for the analysis; however, each folder has much more data, including a dataset for each year of the analysis. Data are also available is separate .csv files for each land cover type. Oterh data can be found for the minimum, monthly, and seasonal transit time found in their respective folders. These data were produced using the python code found in the "supporting_code" folder given the ease of working with .nc and EASE grid in the xarray python module. R was used  primarily for data visualization purposes. The remaining files in the "data" and "data/supporting_data"" folder primarily contain ground-based estimates of storage and transit found in public databases or through a literature search, but have been extensively processed and filtered here.
 
 #Code information
 
@@ -30,26 +21,27 @@ Python scripts can be found in the "supporting_code" folder.
 Each R script in this project has a particular function:
 
 01_start.R: This script loads the R packages used in the analysis, sets the
-directory, and imports the user-created functions for the project in the 
-02_functions.R script. This script can also download the annual and minumum 
-transit datasets, which are core to the analyses.
+directory, and imports custom functions for the project. You can also load in the 
+main transit time (turnover) datasets here using the `source()` function.
 
-03_generate_data.R This script is not necessary to run and is primarily
+02_functions.R: This script contains the custom function for this analysis,
+ primarily to work with importing the seasonal transit data. Load this using the 
+ `source()` function in the 01_start.R script. 
+
+03_generate_data.R: This script is not necessary to run and is primarily
 for documentation. The main role of this code was to import and wrangle
 the data needed to calculate ground-based estimates of aboveground water storage.
 
 04_annual_turnover_storage_import.R: This script imports the annual turnover and
-storage data for each landcover type.
+storage data for each landcover type. You load in these data from the 01_start.R script
+using the `source()` function.
 
-05_annual_turnover_storage_import.R: This script imports the minimum turnover and
+05_minimum_turnover_storage_import.R: This script imports the minimum turnover and
 storage data for each landcover type. Minimum is defined as the lowest monthly
-estimate.
+estimate.You load in these data from the 01_start.R script
+using the `source()` function.
 
-06_figures_tables.R: This is the main workhouse. This script generates the key 
-figures and summary statstics used in the study that the get saved in the 
-manuscript_figures folder. Maps were produced using Python code found in the
-"supporting_code"" folder
-
-
-
-
+06_figures_tables.R: This is the main workhouse for figure/table production and 
+supporting analyses. This script generates the key figures and summary statistics 
+used in the study that then get saved in the  manuscript_figures folder. Note that all
+maps were produced using Python code found in the "supporting_code"" folder.
