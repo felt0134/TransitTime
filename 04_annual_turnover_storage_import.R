@@ -1,11 +1,11 @@
 
-#import and wrangle annual storage and turnover
+#import and wrangle annual storage and turnover. Run this 01_start.R.
 
 #land cover ID
 lc_id <- read.csv('data/land_cover_id.csv')
 
 #set directories and land cover types to import
-annual_turnover_filepath <- 'data/turnover_from_python/annual/land_cover_csvs/'
+annual_turnover_filepath <- 'data/turnover_from_python/updated/annual/land_cover/csv/'
 annual_turnover_dir <- dir(annual_turnover_filepath, full.names = T)
 annual_turnover_dir <- annual_turnover_dir[-c(11,13,15,16,17)] #remove land classes with no data
 
@@ -29,7 +29,7 @@ for(i in annual_turnover_dir[1:12]){
   #get land cover ID
   name <-
     gsub(
-      'data/turnover_from_python/annual/land_cover_csvs//landclass.','',i)
+      'data/turnover_from_python/updated/annual/land_cover/csv//landclass.','',i)
   name <- gsub('.3856x1624.bin.nc.csv','', name)
   lc_filtered$class_number <- as.integer(name)
   lc_filtered <- merge(lc_filtered, lc_id, by = c('class_number'))
@@ -46,10 +46,6 @@ rownames(annual_turnover_lc) <- NULL
 #cleanup
 rm(lc_filtered,lc,name,annual_turnover_filepath,annual_turnover_dir,
    annual_turnover_list,i)
-
-#only consider pixels with at least four months of data
-annual_turnover_lc <- annual_turnover_lc %>%
-  dplyr::filter(sample_size > 3)
 
 #quick look
 print("annual turnover quick look")
