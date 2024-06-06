@@ -1,18 +1,19 @@
 
-# functions used in this analysis
+# custom functions used in this analysis
 
 # seasonal transit imports ----
 
 #seasonal import that summarizes transit by land cover type
 seasonal_turnover_lc <- function(season,winter){
   
-  lc_id <- read.csv('./../../land_cover_nsidc_ease2/land_cover_id.csv')  
+  lc_id <- read.csv('data/land_cover_id.csv')  
   
   #set directories
   # season = 'winter'
-  # winter = F
-  filepath <- paste0('./../../turnover_from_python/seasonal/land_cover_csvs/',season,
-                     '/')
+  # winter = T
+  filepath <- 
+    paste0('data/turnover_from_python/updated/seasonal/land_cover/csv/',
+           season,'/')
   dir <- dir(filepath, full.names = T)
   dir <- dir[-c(11,13,15,16,17)] #remove land classes with no data
   
@@ -34,8 +35,9 @@ seasonal_turnover_lc <- function(season,winter){
     
     
     #get land cover ID
-    name <- gsub(paste0('./../../turnover_from_python/seasonal/land_cover_csvs/',
-                        season,'//landclass.'),'', i)
+    name <- 
+      gsub(paste0('data/turnover_from_python/updated/seasonal/land_cover/csv/',
+                  season,'//',season,'landclass.'),'', i)
     name <- gsub('.3856x1624.bin.nc.csv',
                  '', name)
     lc_filtered$class_number <- as.integer(name)
@@ -53,7 +55,7 @@ seasonal_turnover_lc <- function(season,winter){
   #merge with annual turnover dataframe so we are working with pixels
   #with at least four months of data
   
-  seasonal_turnover <- merge(seasonal_turnover,annual_turnover_lc[c(2,3,7)],by=c('lat','lon'))
+  seasonal_turnover <- merge(seasonal_turnover,annual_turnover_lc[c(2,3)],by=c('lat','lon'))
   
   
   group_2_list <- unique(seasonal_turnover$group_2)
@@ -103,11 +105,11 @@ seasonal_turnover_lc <- function(season,winter){
 #seasonal import without any summaries of transit
 seasonal_turnover_import <- function(season){
   
-  lc_id <- read.csv('./../../land_cover_nsidc_ease2/land_cover_id.csv')  
+  lc_id <- read.csv('data/land_cover_id.csv')  
   
   #set directories
-  #season = 'spring'
-  filepath <- paste0('./../../turnover_from_python/seasonal/land_cover_csvs/',season,
+  season = 'spring'
+  filepath <- paste0('data/turnover_from_python/updated/seasonal/land_cover/csv/',season,
                      '/')
   dir <- dir(filepath, full.names = T)
   dir <- dir[-c(11,13,15,16,17)]
@@ -130,8 +132,9 @@ seasonal_turnover_import <- function(season){
     
     
     #get land cover ID
-    name <- gsub(paste0('./../../turnover_from_python/seasonal/land_cover_csvs/',
-                        season,'//landclass.'),'', i)
+    name <- 
+      gsub(paste0('data/turnover_from_python/updated/seasonal/land_cover/csv/',
+                  season,'//',season,'landclass.'),'', i)
     name <- gsub('.3856x1624.bin.nc.csv',
                  '', name)
     lc_filtered$class_number <- as.integer(name)
