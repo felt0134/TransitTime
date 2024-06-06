@@ -1,4 +1,4 @@
-#test
+
 #clear work environment and set up libraries and functions
 rm(list=ls())
 
@@ -19,12 +19,3 @@ source('04_annual_turnover_storage_import.r')
 
 #import minimum transit time data
 source('05_minimum_turnover_import.r')
-
-# todo:
-
-# 1) Need to go through the generate data script
-# 2) need to go throught he pythons cripts and add them to this project
-# 3) then need to add this project to zenodo as a zip file
-# 4) submit manuscript.
-
-#hello
